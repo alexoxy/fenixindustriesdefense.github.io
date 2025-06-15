@@ -97,20 +97,29 @@
 			// Validate "target" to prevent unsafe input.
 			function isValidTarget(target) {
 				// Ensure target is a valid CSS selector or DOM element and sanitize input.
-				try {
+
 					return typeof target === 'string' &&
 						target.trim().length > 0 &&
 						!target.trim().startsWith('<') && // Reject strings starting with '<'.
 						!/[<>]/.test(target) && // Reject strings containing '<' or '>'.
+						/^[a-zA-Z0-9.#\[\]=:()_-]+$/.test(target.trim()) && // Allow only valid CSS selector characters.
 						$(target).length > 0;
-				} catch (e) {
-					return false;
-				}
+						!target.trim().startsWith('<') && // Reject strings starting with '<'.
+
+						!/[<>]/.test(target) && // Reject strings containing '<' or '>'.
+			}
+						$(target).length > 0;
+
+			if (typeof config.target !== 'object' && isValidTarget(config.target)) {
+				config.target = $.find(config.target); // Use jQuery.find for safe handling.
+			} else {
+			}
 			}
 
 			// Expand "target" if it's not a jQuery object already and is valid.
 			if (typeof config.target != 'jQuery' && isValidTarget(config.target))
-				config.target = $.find(config.target); // Use jQuery.find for safe handling.
+				config.target = $.find(config.target); // Use jQuery.find for safe handling.
+
 			else
 				config.target = $this; // Default to the current element if invalid.
 
