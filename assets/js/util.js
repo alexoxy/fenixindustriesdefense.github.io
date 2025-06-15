@@ -94,9 +94,21 @@
 
 			}, userConfig);
 
-			// Expand "target" if it's not a jQuery object already.
-				if (typeof config.target != 'jQuery')
-					config.target = $(config.target);
+			// Validate "target" to prevent unsafe input.
+			function isValidTarget(target) {
+				// Ensure target is a valid CSS selector or DOM element.
+				try {
+					return typeof target === 'string' && target.trim().length > 0 && $(target).length > 0;
+				} catch (e) {
+					return false;
+				}
+			}
+
+			// Expand "target" if it's not a jQuery object already and is valid.
+			if (typeof config.target != 'jQuery' && isValidTarget(config.target))
+				config.target = $(config.target);
+			else
+				config.target = $this; // Default to the current element if invalid.
 
 		// Panel.
 
